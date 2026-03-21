@@ -1,7 +1,6 @@
 package com.crs.controller;
 
-import com.crs.dao.RoleDAO;
-import com.crs.dao.UserDAO;
+import com.crs.ejb.UserManagementService;
 import com.crs.model.Role;
 import com.crs.model.User;
 import jakarta.ejb.EJB;
@@ -19,16 +18,13 @@ public class AddUserServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private RoleDAO roleDAO;
-
-    @EJB
-    private UserDAO userDAO;
+    private UserManagementService userManagementService;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<Role> roleList = roleDAO.findAllRoles();
+        List<Role> roleList = userManagementService.getAllRoles();
 
         request.setAttribute("roleList", roleList);
         request.setAttribute("pageTitle", "Add User");
@@ -59,7 +55,7 @@ public class AddUserServlet extends HttpServlet {
             return;
         }
 
-        User existingUser = userDAO.findByEmail(email);
+        User existingUser = userManagementService.getUserByEmail(email);
         if (existingUser != null) {
             request.setAttribute("errorMessage", "Email already exists.");
             doGet(request, response);
@@ -73,7 +69,7 @@ public class AddUserServlet extends HttpServlet {
         user.setPassword(password.trim()); // 先明文，后面再换 hash
         user.setStatus("ACTIVE");
 
-        userDAO.insertUser(user);
+        userManagementService.createUser(user);
 
         response.sendRedirect("user-management");
     }

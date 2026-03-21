@@ -1,6 +1,6 @@
 package com.crs.controller;
 
-import com.crs.dao.UserDAO;
+import com.crs.ejb.UserManagementService;
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,7 +15,7 @@ public class UserStatusServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private UserDAO userDAO;
+    private UserManagementService userManagementService;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -28,7 +28,7 @@ public class UserStatusServlet extends HttpServlet {
                 && status != null && !status.trim().isEmpty()) {
 
             int userId = Integer.parseInt(userIdStr);
-            userDAO.updateUserStatus(userId, status);
+            userManagementService.updateUserStatus(userId, status);
         }
 
         response.sendRedirect("user-management");

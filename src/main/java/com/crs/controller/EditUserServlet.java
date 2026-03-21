@@ -1,7 +1,6 @@
 package com.crs.controller;
 
-import com.crs.dao.RoleDAO;
-import com.crs.dao.UserDAO;
+import com.crs.ejb.UserManagementService;
 import com.crs.model.Role;
 import com.crs.model.User;
 import jakarta.ejb.EJB;
@@ -19,10 +18,7 @@ public class EditUserServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private UserDAO userDAO;
-
-    @EJB
-    private RoleDAO roleDAO;
+    private UserManagementService userManagementService;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -36,8 +32,8 @@ public class EditUserServlet extends HttpServlet {
         }
 
         int userId = Integer.parseInt(userIdStr);
-        User user = userDAO.findById(userId);
-        List<Role> roleList = roleDAO.findAllRoles();
+        User user = userManagementService.getUserById(userId);
+        List<Role> roleList = userManagementService.getAllRoles();
 
         if (user == null) {
             response.sendRedirect("user-management");
@@ -78,7 +74,7 @@ public class EditUserServlet extends HttpServlet {
 
         int userId = Integer.parseInt(userIdStr);
 
-        User existingUser = userDAO.findByEmail(email.trim());
+        User existingUser = userManagementService.getUserByEmail(email);
         if (existingUser != null && existingUser.getUserId() != userId) {
             request.setAttribute("errorMessage", "Email already exists.");
             doGet(request, response);
@@ -92,7 +88,7 @@ public class EditUserServlet extends HttpServlet {
         user.setEmail(email.trim());
         user.setStatus(status.trim());
 
-        userDAO.updateUser(user);
+        userManagementService.createUser(user);
 
         response.sendRedirect("user-management");
     }
