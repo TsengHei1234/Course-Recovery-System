@@ -1,0 +1,10 @@
+<%
+    Integer userId = (Integer) session.getAttribute("userId");
+    String userName = (String) session.getAttribute("userName");
+    String roleName = (String) session.getAttribute("roleName");
+
+    if (userId == null || userName == null || roleName == null) {
+        response.sendRedirect(request.getContextPath() + "/login.jsp");
+        return;
+    }
+%>

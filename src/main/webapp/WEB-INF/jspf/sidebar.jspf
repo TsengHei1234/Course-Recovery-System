@@ -1,0 +1,55 @@
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <div class="eyebrow">Enterprise System</div>
+        <div class="brand-title">CRS</div>
+        <div class="brand-subtitle">Course Recovery System</div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a class="nav-link ${requestScope.currentPage eq 'dashboard' ? 'active' : ''}" href="${pageContext.request.contextPath}/dashboard.jsp">
+            <span class="nav-icon"></span>
+            <span>Dashboard</span>
+        </a>
+
+        <a class="nav-link ${requestScope.currentPage eq 'users' ? 'active' : ''}" href="${pageContext.request.contextPath}/users.jsp">
+            <span class="nav-icon"></span>
+            <span>User Management</span>
+        </a>
+
+        <a class="nav-link ${requestScope.currentPage eq 'students' ? 'active' : ''}" href="${pageContext.request.contextPath}/students.jsp">
+            <span class="nav-icon"></span>
+            <span>Students</span>
+        </a>
+
+        <a class="nav-link ${requestScope.currentPage eq 'courses' ? 'active' : ''}" href="${pageContext.request.contextPath}/programs-courses.jsp">
+            <span class="nav-icon"></span>
+            <span>Programs &amp; Courses</span>
+        </a>
+
+        <% if ("officer".equals(String.valueOf(session.getAttribute("userRole")))) { %>
+            <a class="nav-link ${requestScope.currentPage eq 'recovery-hub' || requestScope.currentPage eq 'recovery-workspace' ? 'active' : ''}" href="${pageContext.request.contextPath}/recovery-plans.jsp">
+                <span class="nav-icon"></span>
+                <span>Recovery Plans</span>
+            </a>
+        <% } %>
+
+        <a class="nav-link ${requestScope.currentPage eq 'eligibility' ? 'active' : ''}" href="${pageContext.request.contextPath}/eligibility-enrolment.jsp">
+            <span class="nav-icon"></span>
+            <span>Eligibility &amp; Enrolment</span>
+        </a>
+
+        <a class="nav-link ${requestScope.currentPage eq 'reports' ? 'active' : ''}" href="${pageContext.request.contextPath}/academic-reports.jsp">
+            <span class="nav-icon"></span>
+            <span>Academic Reports</span>
+        </a>
+
+        <a class="nav-link ${requestScope.currentPage eq 'email-templates' ? 'active' : ''}" href="${pageContext.request.contextPath}/email-templates.jsp">
+            <span class="nav-icon"></span>
+            <span>Email Templates</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a class="btn btn-outline btn-block btn-left" href="${pageContext.request.contextPath}/login.jsp?logout=true">Logout</a>
+    </div>
+</aside>
