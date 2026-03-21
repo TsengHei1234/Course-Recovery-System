@@ -1,7 +1,8 @@
 package com.crs.controller;
 
-import com.crs.dao.UserDAO;
 import com.crs.model.User;
+import com.crs.ejb.UserManagementService;
+
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,13 +18,13 @@ public class UserManagementServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private UserDAO userDAO;
+    private UserManagementService userManagementService;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<User> userList = userDAO.findAllUsers();
+    	List<User> userList = userManagementService.getAllUsers();
 
         request.setAttribute("userList", userList);
         request.setAttribute("pageTitle", "User Management");

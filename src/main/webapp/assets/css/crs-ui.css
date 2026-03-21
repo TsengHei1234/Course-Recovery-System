@@ -328,16 +328,23 @@ textarea {
 }
 
 .nav-icon {
-    width: 18px;
-    height: 18px;
-    border-radius: 6px;
-    background: #e2e8f0;
-    display: inline-block;
-    flex: 0 0 18px;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 22px;
+    color: currentColor;
 }
 
-.nav-link.active .nav-icon {
-    background: rgba(255, 255, 255, 0.24);
+.nav-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .sidebar-footer {
@@ -420,6 +427,9 @@ textarea {
 }
 
 .user-pill {
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -427,31 +437,44 @@ textarea {
     border-radius: 18px;
     border: 1px solid var(--line);
     background: #ffffff;
+    justify-content: flex-start;
 }
 
 .user-avatar {
     width: 38px;
     height: 38px;
+    flex: 0 0 38px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 999px;
     background: #f8fafc;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.user-meta {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .user-name {
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .user-role {
     margin-top: 2px;
     color: var(--muted);
     font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-
 .app-content {
     padding: 24px;
 }
