@@ -15,4 +15,5 @@ public interface UserDAO {
     void updateUserStatus(int userId, String status);
     
     void insertUser(User user);
+    void updateUser(User user);
 }
