@@ -82,7 +82,7 @@
         </a>
 
         <a class="nav-link ${requestScope.currentPage eq 'email-templates' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/email-templates.jsp">
+           href="${pageContext.request.contextPath}/email-templates">
             <span class="nav-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                     <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>

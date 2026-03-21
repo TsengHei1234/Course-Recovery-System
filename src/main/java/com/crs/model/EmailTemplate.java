@@ -1,6 +1,9 @@
 package com.crs.model;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmailTemplate implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -13,6 +16,16 @@ public class EmailTemplate implements Serializable {
     private String subjectTemplate;
     private String bodyTemplate;
     private boolean active;
+    private Integer updatedBy;
+    private String updatedByName;
+    private Timestamp updatedAt;
+
+    private List<String> placeholders = new ArrayList<>();
+    private String previewSubject;
+    private String previewBodyHtml;
+    private String bodyTemplateEscaped;
+    private boolean htmlTemplate;
+    private String updatedAtDisplay;
 
     public int getEmailTemplateId() {
         return emailTemplateId;
@@ -76,5 +89,77 @@ public class EmailTemplate implements Serializable {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Integer getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(Integer updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public String getUpdatedByName() {
+        return updatedByName;
+    }
+
+    public void setUpdatedByName(String updatedByName) {
+        this.updatedByName = updatedByName;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public List<String> getPlaceholders() {
+        return placeholders;
+    }
+
+    public void setPlaceholders(List<String> placeholders) {
+        this.placeholders = placeholders;
+    }
+
+    public String getPreviewSubject() {
+        return previewSubject;
+    }
+
+    public void setPreviewSubject(String previewSubject) {
+        this.previewSubject = previewSubject;
+    }
+
+    public String getPreviewBodyHtml() {
+        return previewBodyHtml;
+    }
+
+    public void setPreviewBodyHtml(String previewBodyHtml) {
+        this.previewBodyHtml = previewBodyHtml;
+    }
+
+    public String getBodyTemplateEscaped() {
+        return bodyTemplateEscaped;
+    }
+
+    public void setBodyTemplateEscaped(String bodyTemplateEscaped) {
+        this.bodyTemplateEscaped = bodyTemplateEscaped;
+    }
+
+    public boolean isHtmlTemplate() {
+        return htmlTemplate;
+    }
+
+    public void setHtmlTemplate(boolean htmlTemplate) {
+        this.htmlTemplate = htmlTemplate;
+    }
+
+    public String getUpdatedAtDisplay() {
+        return updatedAtDisplay;
+    }
+
+    public void setUpdatedAtDisplay(String updatedAtDisplay) {
+        this.updatedAtDisplay = updatedAtDisplay;
     }
 }
