@@ -68,7 +68,7 @@
                                         </td>
                                         <td>
                                             <div class="button-row">
-                                                <a href="editUser.jsp?userId=<%= user.getUserId() %>" class="btn btn-outline btn-compact">Edit</a>
+                                            	<a href="edit-user?userId=<%= user.getUserId() %>" class="btn btn-outline btn-compact">Edit</a>
 
                                                 <form action="user-status" method="post" style="display:inline;">
                                                     <input type="hidden" name="userId" value="<%= user.getUserId() %>" />

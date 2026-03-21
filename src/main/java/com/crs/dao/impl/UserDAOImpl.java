@@ -40,6 +40,9 @@ public class UserDAOImpl implements UserDAO {
     
     private static final String INSERT_USER_SQL =
             "INSERT INTO users (role_id, name, email, password, status) VALUES (?, ?, ?, ?, ?)";
+    
+    private static final String UPDATE_USER_SQL =
+            "UPDATE users SET role_id = ?, name = ?, email = ?, status = ? WHERE user_id = ?";
 
     @Override
     public void updatePassword(int userId, String password) {
@@ -178,6 +181,26 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (Exception e) {
             System.out.println("ERROR in insertUser()");
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
+    public void updateUser(User user) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(UPDATE_USER_SQL)) {
+
+            ps.setInt(1, user.getRoleId());
+            ps.setString(2, user.getName());
+            ps.setString(3, user.getEmail());
+            ps.setString(4, user.getStatus());
+            ps.setInt(5, user.getUserId());
+
+            int rows = ps.executeUpdate();
+            System.out.println("Rows updated in users: " + rows);
+
+        } catch (Exception e) {
+            System.out.println("ERROR in updateUser()");
             e.printStackTrace();
         }
     }
