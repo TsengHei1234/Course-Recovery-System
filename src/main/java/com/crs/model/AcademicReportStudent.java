@@ -1,0 +1,116 @@
+package com.crs.model;
+
+import java.io.Serializable;
+
+public class AcademicReportStudent implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String studentId;
+    private String studentName;
+    private String email;
+    private int programId;
+    private String programCode;
+    private String programName;
+    private int intakeId;
+    private String intakeName;
+    private int yearId;
+    private String yearName;
+    private int semesterId;
+    private String semesterName;
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getProgramId() {
+        return programId;
+    }
+
+    public void setProgramId(int programId) {
+        this.programId = programId;
+    }
+
+    public String getProgramCode() {
+        return programCode;
+    }
+
+    public void setProgramCode(String programCode) {
+        this.programCode = programCode;
+    }
+
+    public String getProgramName() {
+        return programName;
+    }
+
+    public void setProgramName(String programName) {
+        this.programName = programName;
+    }
+
+    public int getIntakeId() {
+        return intakeId;
+    }
+
+    public void setIntakeId(int intakeId) {
+        this.intakeId = intakeId;
+    }
+
+    public String getIntakeName() {
+        return intakeName;
+    }
+
+    public void setIntakeName(String intakeName) {
+        this.intakeName = intakeName;
+    }
+
+    public int getYearId() {
+        return yearId;
+    }
+
+    public void setYearId(int yearId) {
+        this.yearId = yearId;
+    }
+
+    public String getYearName() {
+        return yearName;
+    }
+
+    public void setYearName(String yearName) {
+        this.yearName = yearName;
+    }
+
+    public int getSemesterId() {
+        return semesterId;
+    }
+
+    public void setSemesterId(int semesterId) {
+        this.semesterId = semesterId;
+    }
+
+    public String getSemesterName() {
+        return semesterName;
+    }
+
+    public void setSemesterName(String semesterName) {
+        this.semesterName = semesterName;
+    }
+}
