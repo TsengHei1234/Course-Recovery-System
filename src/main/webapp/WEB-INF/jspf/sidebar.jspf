@@ -11,7 +11,7 @@
             <span>Dashboard</span>
         </a>
 
-        <a class="nav-link ${requestScope.currentPage eq 'users' ? 'active' : ''}" href="${pageContext.request.contextPath}/users.jsp">
+        <a class="nav-link ${requestScope.currentPage eq 'users' ? 'active' : ''}" href="user-management">
             <span class="nav-icon"></span>
             <span>User Management</span>
         </a>
@@ -33,7 +33,7 @@
             </a>
         <% } %>
 
-        <a class="nav-link ${requestScope.currentPage eq 'eligibility' ? 'active' : ''}" href="${pageContext.request.contextPath}/eligibility-enrolment.jsp">
+        <a class="nav-link ${requestScope.currentPage eq 'eligibility' ? 'active' : ''}" href="${pageContext.request.contextPath}/eligibility.jsp">
             <span class="nav-icon"></span>
             <span>Eligibility &amp; Enrolment</span>
         </a>
