@@ -1,5 +1,17 @@
+<%@ page import="java.util.List" %>
+<%@ page import="com.crs.model.EligibilityRecord" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
+    List<EligibilityRecord> awaitingList = (List<EligibilityRecord>) request.getAttribute("awaitingList");
+    List<EligibilityRecord> pendingApprovalList = (List<EligibilityRecord>) request.getAttribute("pendingApprovalList");
+    List<EligibilityRecord> recoveryQueueList = (List<EligibilityRecord>) request.getAttribute("recoveryQueueList");
+    List<EligibilityRecord> processedList = (List<EligibilityRecord>) request.getAttribute("processedList");
+
+    int awaitingCount = awaitingList != null ? awaitingList.size() : 0;
+    int pendingApprovalCount = pendingApprovalList != null ? pendingApprovalList.size() : 0;
+    int recoveryQueueCount = recoveryQueueList != null ? recoveryQueueList.size() : 0;
+    int processedCount = processedList != null ? processedList.size() : 0;
+
     request.setAttribute("pageTitle", "Eligibility & Enrolment");
     request.setAttribute("breadcrumb1", "Academic Management");
     request.setAttribute("breadcrumb2", "Eligibility & Enrolment");
@@ -87,7 +99,7 @@
                         <section class="card metric-card">
                             <div>
                                 <div class="metric-label">Awaiting Check</div>
-                                <div class="metric-value">6</div>
+                                <div class="metric-value"><%= awaitingCount %></div>
                             </div>
                             <div class="metric-icon">&#10003;</div>
                         </section>
@@ -95,7 +107,7 @@
                         <section class="card metric-card">
                             <div>
                                 <div class="metric-label">Eligible Pending Approval</div>
-                                <div class="metric-value">3</div>
+                                <div class="metric-value"><%= pendingApprovalCount %></div>
                             </div>
                             <div class="metric-icon">&#9673;</div>
                         </section>
@@ -103,7 +115,7 @@
                         <section class="card metric-card">
                             <div>
                                 <div class="metric-label">Recovery Queue</div>
-                                <div class="metric-value">2</div>
+                                <div class="metric-value"><%= recoveryQueueCount %></div>
                             </div>
                             <div class="metric-icon">&#9678;</div>
                         </section>
@@ -111,7 +123,7 @@
                         <section class="card metric-card">
                             <div>
                                 <div class="metric-label">Processed Cases</div>
-                                <div class="metric-value">4</div>
+                                <div class="metric-value"><%= processedCount %></div>
                             </div>
                             <div class="metric-icon">&#9635;</div>
                         </section>
@@ -121,12 +133,15 @@
                     <section class="card content-card">
                         <div class="card-title-row">
                             <div class="card-title-group">
-                                <h2 class="card-title">Awaiting Eligibility Check (6)</h2>
+                                <h2 class="card-title">Awaiting Eligibility Check (<%= awaitingCount %>)</h2>
                                 <p class="card-description">
                                     Click Check All Eligibility to evaluate all students in this section.
                                 </p>
                             </div>
-                            <button type="button" class="btn btn-primary">Check All Eligibility</button>
+                            <form action="eligibility" method="post" style="display:inline;">
+							    <input type="hidden" name="action" value="checkAll"/>
+							    <button type="submit" class="btn btn-primary">Check All Eligibility</button>
+							</form>
                         </div>
 
                         <div class="table-wrap">
@@ -142,32 +157,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="strong-cell">Alex Wong</div>
-                                            <div class="template-subtle">TP067001</div>
-                                        </td>
-                                        <td>Diploma in IT</td>
-                                        <td>2.18</td>
-                                        <td>2</td>
-                                        <td>Year 2 / Semester 1</td>
-                                        <td><span class="tag-badge dark">Not Yet Checked</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="strong-cell">Melissa Lee</div>
-                                            <div class="template-subtle">TP067002</div>
-                                        </td>
-                                        <td>Diploma in Software Engineering</td>
-                                        <td>1.94</td>
-                                        <td>4</td>
-                                        <td>Year 2 / Semester 1</td>
-                                        <td><span class="tag-badge dark">Not Yet Checked</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6" class="empty-row">Prototype rows only. Backend integration comes next.</td>
-                                    </tr>
-                                </tbody>
+								<%
+								    if (awaitingList != null && !awaitingList.isEmpty()) {
+								        for (EligibilityRecord record : awaitingList) {
+								%>
+								    <tr>
+								        <td>
+								            <div class="strong-cell"><%= record.getStudentName() %></div>
+								            <div class="template-subtle"><%= record.getStudentId() %></div>
+								        </td>
+								        <td><%= record.getProgrammeName() %></td>
+								        <td><%= String.format("%.2f", record.getCgpa()) %></td>
+								        <td><%= record.getFailedCourseCount() %></td>
+								        <td><%= record.getCurrentYearName() %> / <%= record.getCurrentSemesterName() %></td>
+								        <td><span class="tag-badge dark">Awaiting Check</span></td>
+								    </tr>
+								<%
+								        }
+								    } else {
+								%>
+								    <tr>
+								        <td colspan="6" class="empty-row">No students are awaiting eligibility check.</td>
+								    </tr>
+								<%
+								    }
+								%>
+								</tbody>
                             </table>
                         </div>
                     </section>
@@ -176,7 +191,7 @@
                     <section class="card content-card">
                         <div class="card-title-row">
                             <div class="card-title-group">
-                                <h2 class="card-title">Eligible Pending Approval (3)</h2>
+                                <h2 class="card-title">Eligible Pending Approval (<%= pendingApprovalCount %>)</h2>
                                 <p class="card-description">
                                     Academic Officer can approve individually or in bulk.
                                 </p>
@@ -201,29 +216,38 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td><input type="checkbox" class="table-checkbox" /></td>
-                                        <td>
-                                            <div class="strong-cell">Aaron Goh</div>
-                                            <div class="template-subtle">TP067003</div>
-                                        </td>
-                                        <td>2.64</td>
-                                        <td>0</td>
-                                        <td class="template-subtle">Meets CGPA and failed-course criteria.</td>
-                                        <td><button type="button" class="btn btn-primary btn-compact">Approve Enrolment</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" class="table-checkbox" /></td>
-                                        <td>
-                                            <div class="strong-cell">Daniel Ho</div>
-                                            <div class="template-subtle">TP067005</div>
-                                        </td>
-                                        <td>2.09</td>
-                                        <td>1</td>
-                                        <td class="template-subtle">Eligible for next enrolment with minor failed-course record.</td>
-                                        <td><button type="button" class="btn btn-primary btn-compact">Approve Enrolment</button></td>
-                                    </tr>
-                                </tbody>
+								<%
+								    if (pendingApprovalList != null && !pendingApprovalList.isEmpty()) {
+								        for (EligibilityRecord record : pendingApprovalList) {
+								%>
+								    <tr>
+								        <td><input type="checkbox" class="table-checkbox" /></td>
+								        <td>
+								            <div class="strong-cell"><%= record.getStudentName() %></div>
+								            <div class="template-subtle"><%= record.getStudentId() %></div>
+								        </td>
+								        <td><%= String.format("%.2f", record.getCgpa()) %></td>
+								        <td><%= record.getFailedCourseCount() %></td>
+								        <td class="template-subtle"><%= record.getReason() != null ? record.getReason() : "-" %></td>
+								        <td>
+											<form action="eligibility" method="post" style="display:inline;">
+											    <input type="hidden" name="action" value="approveOne" />
+											    <input type="hidden" name="progressionId" value="<%= record.getProgressionId() %>" />
+											    <button type="submit" class="btn btn-primary btn-compact">Approve Enrolment</button>
+											</form>
+								        </td>
+								    </tr>
+								<%
+								        }
+								    } else {
+								%>
+								    <tr>
+								        <td colspan="6" class="empty-row">No students are pending approval.</td>
+								    </tr>
+								<%
+								    }
+								%>
+								</tbody>
                             </table>
                         </div>
                     </section>
@@ -232,7 +256,7 @@
                     <section class="card content-card">
                         <div class="card-title-row">
                             <div class="card-title-group">
-                                <h2 class="card-title">Not Eligible / Recovery Queue (2)</h2>
+                                <h2 class="card-title">Not Eligible / Recovery Queue (<%= recoveryQueueCount %>)</h2>
                                 <p class="card-description">
                                     Students here are already checked and found not eligible.
                                 </p>
@@ -256,30 +280,35 @@
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><input type="checkbox" class="table-checkbox" /></td>
-                                        <td>
-                                            <div class="strong-cell">Melissa Lee</div>
-                                            <div class="template-subtle">TP067002</div>
-                                        </td>
-                                        <td>1.94</td>
-                                        <td>4</td>
-                                        <td class="template-subtle">CGPA below 2.0 and failed courses more than 3.</td>
-                                        <td><button type="button" class="btn btn-outline btn-compact">Send to Recovery</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td><input type="checkbox" class="table-checkbox" /></td>
-                                        <td>
-                                            <div class="strong-cell">Nur Aina</div>
-                                            <div class="template-subtle">TP067004</div>
-                                        </td>
-                                        <td>1.78</td>
-                                        <td>2</td>
-                                        <td class="template-subtle">CGPA below 2.0.</td>
-                                        <td><button type="button" class="btn btn-outline btn-compact">Send to Recovery</button></td>
-                                    </tr>
-                                </tbody>
+								<tbody>
+								<%
+								    if (recoveryQueueList != null && !recoveryQueueList.isEmpty()) {
+								        for (EligibilityRecord record : recoveryQueueList) {
+								%>
+								    <tr>
+								        <td><input type="checkbox" class="table-checkbox" /></td>
+								        <td>
+								            <div class="strong-cell"><%= record.getStudentName() %></div>
+								            <div class="template-subtle"><%= record.getStudentId() %></div>
+								        </td>
+								        <td><%= String.format("%.2f", record.getCgpa()) %></td>
+								        <td><%= record.getFailedCourseCount() %></td>
+								        <td class="template-subtle"><%= record.getReason() != null ? record.getReason() : "-" %></td>
+								        <td>
+								            <button type="button" class="btn btn-outline btn-compact">Send to Recovery</button>
+								        </td>
+								    </tr>
+								<%
+								        }
+								    } else {
+								%>
+								    <tr>
+								        <td colspan="6" class="empty-row">No students are in recovery queue.</td>
+								    </tr>
+								<%
+								    }
+								%>
+								</tbody>
                             </table>
                         </div>
                     </section>
@@ -287,7 +316,7 @@
                     <!-- PROCESSED -->
                     <section class="card content-card">
                         <div class="card-title-group">
-                            <h2 class="card-title">Processed Cases (4)</h2>
+                            <h2 class="card-title">Processed Cases (<%= processedCount %>)</h2>
                             <p class="card-description">
                                 Approved cases and sent-to-recovery cases are moved here after final action.
                             </p>
@@ -303,26 +332,37 @@
                                         <th>Reason</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="strong-cell">Yasmin Tan</div>
-                                            <div class="template-subtle">TP067006</div>
-                                        </td>
-                                        <td>Diploma in Computer Science</td>
-                                        <td><span class="tag-badge success">Approved</span></td>
-                                        <td class="template-subtle">Enrolment approved after eligibility confirmation.</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="strong-cell">Melissa Lee</div>
-                                            <div class="template-subtle">TP067002</div>
-                                        </td>
-                                        <td>Diploma in Software Engineering</td>
-                                        <td><span class="tag-badge warning">Sent to Recovery</span></td>
-                                        <td class="template-subtle">Routed to recovery workflow after not-eligible outcome.</td>
-                                    </tr>
-                                </tbody>
+								<tbody>
+								<%
+								    if (processedList != null && !processedList.isEmpty()) {
+								        for (EligibilityRecord record : processedList) {
+								%>
+								    <tr>
+								        <td>
+								            <div class="strong-cell"><%= record.getStudentName() %></div>
+								            <div class="template-subtle"><%= record.getStudentId() %></div>
+								        </td>
+								        <td><%= record.getProgrammeName() %></td>
+								        <td>
+								            <% if ("APPROVED".equalsIgnoreCase(record.getStatus())) { %>
+								                <span class="tag-badge success">Approved</span>
+								            <% } else { %>
+								                <span class="tag-badge warning">Sent to Recovery</span>
+								            <% } %>
+								        </td>
+								        <td class="template-subtle"><%= record.getReason() != null ? record.getReason() : "-" %></td>
+								    </tr>
+								<%
+								        }
+								    } else {
+								%>
+								    <tr>
+								        <td colspan="4" class="empty-row">No processed cases found.</td>
+								    </tr>
+								<%
+								    }
+								%>
+								</tbody>
                             </table>
                         </div>
                     </section>

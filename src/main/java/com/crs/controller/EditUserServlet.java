@@ -88,7 +88,7 @@ public class EditUserServlet extends HttpServlet {
         user.setEmail(email.trim());
         user.setStatus(status.trim());
 
-        userManagementService.createUser(user);
+        userManagementService.updateUser(user);
 
         response.sendRedirect("user-management");
     }
