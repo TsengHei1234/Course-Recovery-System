@@ -1,11 +1,30 @@
+<%@ page import="java.util.List" %>
+<%@ page import="com.crs.model.EligibilityRecord" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
 <%
-    request.setAttribute("pageTitle", "Eligibility & Enrolment");
-    request.setAttribute("breadcrumb1", "Academic Management");
-    request.setAttribute("breadcrumb2", "Eligibility & Enrolment");
-    request.setAttribute("breadcrumb3", "");
-    request.setAttribute("currentPage", "eligibility");
+    List<EligibilityRecord> awaitingList = (List<EligibilityRecord>) request.getAttribute("awaitingList");
+    List<EligibilityRecord> pendingApprovalList = (List<EligibilityRecord>) request.getAttribute("pendingApprovalList");
+    List<EligibilityRecord> recoveryQueueList = (List<EligibilityRecord>) request.getAttribute("recoveryQueueList");
+    List<EligibilityRecord> processedList = (List<EligibilityRecord>) request.getAttribute("processedList");
+
+    List<String> programmeOptions = (List<String>) request.getAttribute("programmeOptions");
+    List<String> intakeOptions = (List<String>) request.getAttribute("intakeOptions");
+    List<String> yearOptions = (List<String>) request.getAttribute("yearOptions");
+    List<String> semesterOptions = (List<String>) request.getAttribute("semesterOptions");
+
+    String filterProgramme = (String) request.getAttribute("filterProgramme");
+    String filterIntake = (String) request.getAttribute("filterIntake");
+    String filterYearName = (String) request.getAttribute("filterYearName");
+    String filterSemesterName = (String) request.getAttribute("filterSemesterName");
+    String filterSearch = (String) request.getAttribute("filterSearch");
+
+    int awaitingCount = awaitingList != null ? awaitingList.size() : 0;
+    int pendingApprovalCount = pendingApprovalList != null ? pendingApprovalList.size() : 0;
+    int recoveryQueueCount = recoveryQueueList != null ? recoveryQueueList.size() : 0;
+    int processedCount = processedList != null ? processedList.size() : 0;
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,6 +40,7 @@
             <%@ include file="/WEB-INF/jspf/topbar.jspf" %>
 
             <div class="app-content">
+            	<%@ include file="/WEB-INF/jspf/flash-message.jspf" %>
                 <div class="page-stack">
 
                     <!-- FILTERS -->
@@ -28,58 +48,91 @@
                         <div class="card-title-group">
                             <h2 class="card-title">Eligibility Working Filters</h2>
                             <p class="card-description">
-                                Filter students by programme, intake, year, semester, or student ID / name.
+                                Programme, Intake, Year, Semester, and Student ID / Name. Actions apply to the currently visible filtered rows.
                             </p>
                         </div>
 
-                        <div class="filter-grid-5" style="margin-top: 18px;">
-                            <div class="field-stack">
-                                <label class="field-label-upper" for="eligibilityProgramme">Programme</label>
-                                <select id="eligibilityProgramme" class="select-input">
-                                    <option value="">All</option>
-                                    <option>Diploma in Computer Science</option>
-                                    <option>Diploma in IT</option>
-                                    <option>Diploma in Software Engineering</option>
-                                </select>
-                            </div>
+                        <form action="eligibility" method="get">
+                            <div class="filter-grid-5" style="margin-top: 18px;">
+                                <div class="field-stack">
+                                    <label class="field-label-upper" for="programme">Programme</label>
+                                    <select id="programme" name="programme" class="select-input">
+                                        <option value="">All</option>
+                                        <%
+                                            if (programmeOptions != null) {
+                                                for (String option : programmeOptions) {
+                                        %>
+                                            <option value="<%= option %>" <%= option.equals(filterProgramme) ? "selected" : "" %>><%= option %></option>
+                                        <%
+                                                }
+                                            }
+                                        %>
+                                    </select>
+                                </div>
 
-                            <div class="field-stack">
-                                <label class="field-label-upper" for="eligibilityIntake">Intake</label>
-                                <select id="eligibilityIntake" class="select-input">
-                                    <option value="">All</option>
-                                    <option>May 2024</option>
-                                    <option>May 2025</option>
-                                    <option>November 2024</option>
-                                </select>
-                            </div>
+                                <div class="field-stack">
+                                    <label class="field-label-upper" for="intake">Intake</label>
+                                    <select id="intake" name="intake" class="select-input">
+                                        <option value="">All</option>
+                                        <%
+                                            if (intakeOptions != null) {
+                                                for (String option : intakeOptions) {
+                                        %>
+                                            <option value="<%= option %>" <%= option.equals(filterIntake) ? "selected" : "" %>><%= option %></option>
+                                        <%
+                                                }
+                                            }
+                                        %>
+                                    </select>
+                                </div>
 
-                            <div class="field-stack">
-                                <label class="field-label-upper" for="eligibilityYear">Year</label>
-                                <select id="eligibilityYear" class="select-input">
-                                    <option value="">All</option>
-                                    <option>Year 1</option>
-                                    <option>Year 2</option>
-                                    <option>Year 3</option>
-                                </select>
-                            </div>
+                                <div class="field-stack">
+                                    <label class="field-label-upper" for="yearName">Year</label>
+                                    <select id="yearName" name="yearName" class="select-input">
+                                        <option value="">All</option>
+                                        <%
+                                            if (yearOptions != null) {
+                                                for (String option : yearOptions) {
+                                        %>
+                                            <option value="<%= option %>" <%= option.equals(filterYearName) ? "selected" : "" %>><%= option %></option>
+                                        <%
+                                                }
+                                            }
+                                        %>
+                                    </select>
+                                </div>
 
-                            <div class="field-stack">
-                                <label class="field-label-upper" for="eligibilitySemester">Semester</label>
-                                <select id="eligibilitySemester" class="select-input">
-                                    <option value="">All</option>
-                                    <option>Semester 1</option>
-                                    <option>Semester 2</option>
-                                </select>
-                            </div>
+                                <div class="field-stack">
+                                    <label class="field-label-upper" for="semesterName">Semester</label>
+                                    <select id="semesterName" name="semesterName" class="select-input">
+                                        <option value="">All</option>
+                                        <%
+                                            if (semesterOptions != null) {
+                                                for (String option : semesterOptions) {
+                                        %>
+                                            <option value="<%= option %>" <%= option.equals(filterSemesterName) ? "selected" : "" %>><%= option %></option>
+                                        <%
+                                                }
+                                            }
+                                        %>
+                                    </select>
+                                </div>
 
-                            <div class="field-stack">
-                                <label class="field-label-upper" for="eligibilitySearch">Student ID / Name</label>
-                                <div class="inline-field-row">
-                                    <input id="eligibilitySearch" type="text" class="text-input" placeholder="Search Student ID or Name" />
-                                    <button type="button" class="btn btn-outline">Reset</button>
+                                <div class="field-stack">
+                                    <label class="field-label-upper" for="search">Student ID / Name</label>
+                                    <div class="inline-field-row">
+                                        <input id="search" name="search" type="text" class="text-input"
+                                               value="<%= filterSearch != null ? filterSearch : "" %>"
+                                               placeholder="Search Student ID or Name" />
+                                        <a href="eligibility" class="btn btn-outline">Reset</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+
+                            <div class="button-row" style="margin-top: 16px;">
+                                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            </div>
+                        </form>
                     </section>
 
                     <!-- SUMMARY -->
@@ -87,7 +140,7 @@
                         <section class="card metric-card">
                             <div>
                                 <div class="metric-label">Awaiting Check</div>
-                                <div class="metric-value">6</div>
+                                <div class="metric-value"><%= awaitingCount %></div>
                             </div>
                             <div class="metric-icon">&#10003;</div>
                         </section>
@@ -95,7 +148,7 @@
                         <section class="card metric-card">
                             <div>
                                 <div class="metric-label">Eligible Pending Approval</div>
-                                <div class="metric-value">3</div>
+                                <div class="metric-value"><%= pendingApprovalCount %></div>
                             </div>
                             <div class="metric-icon">&#9673;</div>
                         </section>
@@ -103,7 +156,7 @@
                         <section class="card metric-card">
                             <div>
                                 <div class="metric-label">Recovery Queue</div>
-                                <div class="metric-value">2</div>
+                                <div class="metric-value"><%= recoveryQueueCount %></div>
                             </div>
                             <div class="metric-icon">&#9678;</div>
                         </section>
@@ -111,7 +164,7 @@
                         <section class="card metric-card">
                             <div>
                                 <div class="metric-label">Processed Cases</div>
-                                <div class="metric-value">4</div>
+                                <div class="metric-value"><%= processedCount %></div>
                             </div>
                             <div class="metric-icon">&#9635;</div>
                         </section>
@@ -121,12 +174,19 @@
                     <section class="card content-card">
                         <div class="card-title-row">
                             <div class="card-title-group">
-                                <h2 class="card-title">Awaiting Eligibility Check (6)</h2>
-                                <p class="card-description">
-                                    Click Check All Eligibility to evaluate all students in this section.
-                                </p>
+                                <h2 class="card-title">Awaiting Eligibility Check (<%= awaitingCount %>)</h2>
+                                <p class="card-description">Check All Eligibility evaluates only the currently visible filtered students.</p>
                             </div>
-                            <button type="button" class="btn btn-primary">Check All Eligibility</button>
+
+                            <form action="eligibility" method="post" style="display:inline;">
+                                <input type="hidden" name="action" value="checkAll" />
+                                <input type="hidden" name="programme" value="<%= filterProgramme != null ? filterProgramme : "" %>" />
+                                <input type="hidden" name="intake" value="<%= filterIntake != null ? filterIntake : "" %>" />
+                                <input type="hidden" name="yearName" value="<%= filterYearName != null ? filterYearName : "" %>" />
+                                <input type="hidden" name="semesterName" value="<%= filterSemesterName != null ? filterSemesterName : "" %>" />
+                                <input type="hidden" name="search" value="<%= filterSearch != null ? filterSearch : "" %>" />
+                                <button type="submit" class="btn btn-primary">Check All Eligibility</button>
+                            </form>
                         </div>
 
                         <div class="table-wrap">
@@ -142,31 +202,37 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <%
+                                    if (awaitingList != null && !awaitingList.isEmpty()) {
+                                        for (EligibilityRecord record : awaitingList) {
+                                %>
                                     <tr>
                                         <td>
-                                            <div class="strong-cell">Alex Wong</div>
-                                            <div class="template-subtle">TP067001</div>
+                                            <div class="strong-cell"><%= record.getStudentName() %></div>
+                                            <div class="template-subtle"><%= record.getStudentId() %></div>
                                         </td>
-                                        <td>Diploma in IT</td>
-                                        <td>2.18</td>
-                                        <td>2</td>
-                                        <td>Year 2 / Semester 1</td>
-                                        <td><span class="tag-badge dark">Not Yet Checked</span></td>
-                                    </tr>
-                                    <tr>
+                                        <td><%= record.getProgrammeName() %></td>
+                                        <td><%= String.format("%.2f", record.getCgpa()) %></td>
+                                        <td><%= record.getFailedCourseCount() %></td>
+                                        <td><%= record.getCurrentYearName() %> / <%= record.getCurrentSemesterName() %></td>
                                         <td>
-                                            <div class="strong-cell">Melissa Lee</div>
-                                            <div class="template-subtle">TP067002</div>
-                                        </td>
-                                        <td>Diploma in Software Engineering</td>
-                                        <td>1.94</td>
-                                        <td>4</td>
-                                        <td>Year 2 / Semester 1</td>
-                                        <td><span class="tag-badge dark">Not Yet Checked</span></td>
+										    <% if ("AWAITING_RECHECK".equalsIgnoreCase(record.getStatus())) { %>
+										        <span class="tag-badge dark">Awaiting Re-check</span>
+										    <% } else { %>
+										        <span class="tag-badge dark">Awaiting Check</span>
+										    <% } %>
+										</td>
                                     </tr>
+                                <%
+                                        }
+                                    } else {
+                                %>
                                     <tr>
-                                        <td colspan="6" class="empty-row">Prototype rows only. Backend integration comes next.</td>
+                                        <td colspan="6" class="empty-row">No students are awaiting eligibility check.</td>
                                     </tr>
+                                <%
+                                    }
+                                %>
                                 </tbody>
                             </table>
                         </div>
@@ -176,15 +242,25 @@
                     <section class="card content-card">
                         <div class="card-title-row">
                             <div class="card-title-group">
-                                <h2 class="card-title">Eligible Pending Approval (3)</h2>
-                                <p class="card-description">
-                                    Academic Officer can approve individually or in bulk.
-                                </p>
+                                <h2 class="card-title">Eligible Pending Approval (<%= pendingApprovalCount %>)</h2>
+                                <p class="card-description">Approve individually or approve the selected visible records.</p>
                             </div>
                             <div class="button-row">
-                                <button type="button" class="btn btn-outline">Select All</button>
-                                <button type="button" class="btn btn-outline">Clear All</button>
-                                <button type="button" class="btn btn-primary">Approve Selected Eligible</button>
+                                <button type="button" class="btn btn-outline" onclick="toggleSelection('approval-checkbox', true)">Select All</button>
+                                <button type="button" class="btn btn-outline" onclick="toggleSelection('approval-checkbox', false)">Clear All</button>
+
+                                <form id="approveSelectedForm" action="eligibility" method="post" style="display:inline;">
+                                    <input type="hidden" name="action" value="approveSelected" />
+                                    <input type="hidden" id="approveSelectedIds" name="progressionIds" />
+                                    <input type="hidden" name="programme" value="<%= filterProgramme != null ? filterProgramme : "" %>" />
+                                    <input type="hidden" name="intake" value="<%= filterIntake != null ? filterIntake : "" %>" />
+                                    <input type="hidden" name="yearName" value="<%= filterYearName != null ? filterYearName : "" %>" />
+                                    <input type="hidden" name="semesterName" value="<%= filterSemesterName != null ? filterSemesterName : "" %>" />
+                                    <input type="hidden" name="search" value="<%= filterSearch != null ? filterSearch : "" %>" />
+                                    <button type="button" class="btn btn-primary" onclick="submitBulk('approval-checkbox', 'approveSelectedIds', 'approveSelectedForm')">
+                                        Approve Selected Eligible
+                                    </button>
+                                </form>
                             </div>
                         </div>
 
@@ -201,28 +277,44 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <%
+                                    if (pendingApprovalList != null && !pendingApprovalList.isEmpty()) {
+                                        for (EligibilityRecord record : pendingApprovalList) {
+                                %>
                                     <tr>
-                                        <td><input type="checkbox" class="table-checkbox" /></td>
                                         <td>
-                                            <div class="strong-cell">Aaron Goh</div>
-                                            <div class="template-subtle">TP067003</div>
+                                            <input type="checkbox" class="table-checkbox approval-checkbox" value="<%= record.getProgressionId() %>" />
                                         </td>
-                                        <td>2.64</td>
-                                        <td>0</td>
-                                        <td class="template-subtle">Meets CGPA and failed-course criteria.</td>
-                                        <td><button type="button" class="btn btn-primary btn-compact">Approve Enrolment</button></td>
+                                        <td>
+                                            <div class="strong-cell"><%= record.getStudentName() %></div>
+                                            <div class="template-subtle"><%= record.getStudentId() %></div>
+                                        </td>
+                                        <td><%= String.format("%.2f", record.getCgpa()) %></td>
+                                        <td><%= record.getFailedCourseCount() %></td>
+                                        <td class="template-subtle"><%= record.getReason() != null ? record.getReason() : "-" %></td>
+                                        <td>
+                                            <form action="eligibility" method="post" style="display:inline;">
+                                                <input type="hidden" name="action" value="approveOne" />
+                                                <input type="hidden" name="progressionId" value="<%= record.getProgressionId() %>" />
+                                                <input type="hidden" name="programme" value="<%= filterProgramme != null ? filterProgramme : "" %>" />
+                                                <input type="hidden" name="intake" value="<%= filterIntake != null ? filterIntake : "" %>" />
+                                                <input type="hidden" name="yearName" value="<%= filterYearName != null ? filterYearName : "" %>" />
+                                                <input type="hidden" name="semesterName" value="<%= filterSemesterName != null ? filterSemesterName : "" %>" />
+                                                <input type="hidden" name="search" value="<%= filterSearch != null ? filterSearch : "" %>" />
+                                                <button type="submit" class="btn btn-primary btn-compact">Approve Enrolment</button>
+                                            </form>
+                                        </td>
                                     </tr>
+                                <%
+                                        }
+                                    } else {
+                                %>
                                     <tr>
-                                        <td><input type="checkbox" class="table-checkbox" /></td>
-                                        <td>
-                                            <div class="strong-cell">Daniel Ho</div>
-                                            <div class="template-subtle">TP067005</div>
-                                        </td>
-                                        <td>2.09</td>
-                                        <td>1</td>
-                                        <td class="template-subtle">Eligible for next enrolment with minor failed-course record.</td>
-                                        <td><button type="button" class="btn btn-primary btn-compact">Approve Enrolment</button></td>
+                                        <td colspan="6" class="empty-row">No students are pending approval.</td>
                                     </tr>
+                                <%
+                                    }
+                                %>
                                 </tbody>
                             </table>
                         </div>
@@ -232,15 +324,25 @@
                     <section class="card content-card">
                         <div class="card-title-row">
                             <div class="card-title-group">
-                                <h2 class="card-title">Not Eligible / Recovery Queue (2)</h2>
-                                <p class="card-description">
-                                    Students here are already checked and found not eligible.
-                                </p>
+                                <h2 class="card-title">Not Eligible / Recovery Queue (<%= recoveryQueueCount %>)</h2>
+                                <p class="card-description">Send individually or send the selected visible records to recovery.</p>
                             </div>
                             <div class="button-row">
-                                <button type="button" class="btn btn-outline">Select All</button>
-                                <button type="button" class="btn btn-outline">Clear All</button>
-                                <button type="button" class="btn btn-primary">Send Selected to Recovery</button>
+                                <button type="button" class="btn btn-outline" onclick="toggleSelection('recovery-checkbox', true)">Select All</button>
+                                <button type="button" class="btn btn-outline" onclick="toggleSelection('recovery-checkbox', false)">Clear All</button>
+
+                                <form id="sendSelectedForm" action="eligibility" method="post" style="display:inline;">
+                                    <input type="hidden" name="action" value="sendSelected" />
+                                    <input type="hidden" id="sendSelectedIds" name="progressionIds" />
+                                    <input type="hidden" name="programme" value="<%= filterProgramme != null ? filterProgramme : "" %>" />
+                                    <input type="hidden" name="intake" value="<%= filterIntake != null ? filterIntake : "" %>" />
+                                    <input type="hidden" name="yearName" value="<%= filterYearName != null ? filterYearName : "" %>" />
+                                    <input type="hidden" name="semesterName" value="<%= filterSemesterName != null ? filterSemesterName : "" %>" />
+                                    <input type="hidden" name="search" value="<%= filterSearch != null ? filterSearch : "" %>" />
+                                    <button type="button" class="btn btn-primary" onclick="submitBulk('recovery-checkbox', 'sendSelectedIds', 'sendSelectedForm')">
+                                        Send Selected to Recovery
+                                    </button>
+                                </form>
                             </div>
                         </div>
 
@@ -257,28 +359,44 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <%
+                                    if (recoveryQueueList != null && !recoveryQueueList.isEmpty()) {
+                                        for (EligibilityRecord record : recoveryQueueList) {
+                                %>
                                     <tr>
-                                        <td><input type="checkbox" class="table-checkbox" /></td>
                                         <td>
-                                            <div class="strong-cell">Melissa Lee</div>
-                                            <div class="template-subtle">TP067002</div>
+                                            <input type="checkbox" class="table-checkbox recovery-checkbox" value="<%= record.getProgressionId() %>" />
                                         </td>
-                                        <td>1.94</td>
-                                        <td>4</td>
-                                        <td class="template-subtle">CGPA below 2.0 and failed courses more than 3.</td>
-                                        <td><button type="button" class="btn btn-outline btn-compact">Send to Recovery</button></td>
+                                        <td>
+                                            <div class="strong-cell"><%= record.getStudentName() %></div>
+                                            <div class="template-subtle"><%= record.getStudentId() %></div>
+                                        </td>
+                                        <td><%= String.format("%.2f", record.getCgpa()) %></td>
+                                        <td><%= record.getFailedCourseCount() %></td>
+                                        <td class="template-subtle"><%= record.getReason() != null ? record.getReason() : "-" %></td>
+                                        <td>
+                                            <form action="eligibility" method="post" style="display:inline;">
+                                                <input type="hidden" name="action" value="sendOne" />
+                                                <input type="hidden" name="progressionId" value="<%= record.getProgressionId() %>" />
+                                                <input type="hidden" name="programme" value="<%= filterProgramme != null ? filterProgramme : "" %>" />
+                                                <input type="hidden" name="intake" value="<%= filterIntake != null ? filterIntake : "" %>" />
+                                                <input type="hidden" name="yearName" value="<%= filterYearName != null ? filterYearName : "" %>" />
+                                                <input type="hidden" name="semesterName" value="<%= filterSemesterName != null ? filterSemesterName : "" %>" />
+                                                <input type="hidden" name="search" value="<%= filterSearch != null ? filterSearch : "" %>" />
+                                                <button type="submit" class="btn btn-outline btn-compact">Send to Recovery</button>
+                                            </form>
+                                        </td>
                                     </tr>
+                                <%
+                                        }
+                                    } else {
+                                %>
                                     <tr>
-                                        <td><input type="checkbox" class="table-checkbox" /></td>
-                                        <td>
-                                            <div class="strong-cell">Nur Aina</div>
-                                            <div class="template-subtle">TP067004</div>
-                                        </td>
-                                        <td>1.78</td>
-                                        <td>2</td>
-                                        <td class="template-subtle">CGPA below 2.0.</td>
-                                        <td><button type="button" class="btn btn-outline btn-compact">Send to Recovery</button></td>
+                                        <td colspan="6" class="empty-row">No students are in recovery queue.</td>
                                     </tr>
+                                <%
+                                    }
+                                %>
                                 </tbody>
                             </table>
                         </div>
@@ -287,10 +405,8 @@
                     <!-- PROCESSED -->
                     <section class="card content-card">
                         <div class="card-title-group">
-                            <h2 class="card-title">Processed Cases (4)</h2>
-                            <p class="card-description">
-                                Approved cases and sent-to-recovery cases are moved here after final action.
-                            </p>
+                            <h2 class="card-title">Processed Cases (<%= processedCount %>)</h2>
+                            <p class="card-description">Approved students and sent-to-recovery students are shown here.</p>
                         </div>
 
                         <div class="table-wrap" style="margin-top: 18px;">
@@ -304,24 +420,37 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <%
+                                    if (processedList != null && !processedList.isEmpty()) {
+                                        for (EligibilityRecord record : processedList) {
+                                %>
                                     <tr>
                                         <td>
-                                            <div class="strong-cell">Yasmin Tan</div>
-                                            <div class="template-subtle">TP067006</div>
+                                            <div class="strong-cell"><%= record.getStudentName() %></div>
+                                            <div class="template-subtle"><%= record.getStudentId() %></div>
                                         </td>
-                                        <td>Diploma in Computer Science</td>
-                                        <td><span class="tag-badge success">Approved</span></td>
-                                        <td class="template-subtle">Enrolment approved after eligibility confirmation.</td>
-                                    </tr>
-                                    <tr>
+                                        <td><%= record.getProgrammeName() %></td>
                                         <td>
-                                            <div class="strong-cell">Melissa Lee</div>
-                                            <div class="template-subtle">TP067002</div>
+                                            <% if ("APPROVED".equalsIgnoreCase(record.getStatus())) { %>
+											    <span class="tag-badge success">Approved</span>
+											<% } else if ("COMPLETED_STUDY".equalsIgnoreCase(record.getStatus())) { %>
+											    <span class="tag-badge success">Completed Study</span>
+											<% } else { %>
+											    <span class="tag-badge warning">Sent to Recovery</span>
+											<% } %>
                                         </td>
-                                        <td>Diploma in Software Engineering</td>
-                                        <td><span class="tag-badge warning">Sent to Recovery</span></td>
-                                        <td class="template-subtle">Routed to recovery workflow after not-eligible outcome.</td>
+                                        <td class="template-subtle"><%= record.getReason() != null ? record.getReason() : "-" %></td>
                                     </tr>
+                                <%
+                                        }
+                                    } else {
+                                %>
+                                    <tr>
+                                        <td colspan="4" class="empty-row">No processed cases found.</td>
+                                    </tr>
+                                <%
+                                    }
+                                %>
                                 </tbody>
                             </table>
                         </div>
@@ -331,5 +460,31 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleSelection(className, checked) {
+            var boxes = document.querySelectorAll("." + className);
+            boxes.forEach(function (box) {
+                box.checked = checked;
+            });
+        }
+
+        function submitBulk(className, hiddenInputId, formId) {
+            var boxes = document.querySelectorAll("." + className + ":checked");
+            var ids = [];
+
+            boxes.forEach(function (box) {
+                ids.push(box.value);
+            });
+
+            if (ids.length === 0) {
+                alert("Please select at least one row first.");
+                return;
+            }
+
+            document.getElementById(hiddenInputId).value = ids.join(",");
+            document.getElementById(formId).submit();
+        }
+    </script>
 </body>
 </html>

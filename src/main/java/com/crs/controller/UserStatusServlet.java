@@ -31,6 +31,7 @@ public class UserStatusServlet extends HttpServlet {
             userManagementService.updateUserStatus(userId, status);
         }
 
+        request.getSession().setAttribute("successMessage", "User status updated successfully.");
         response.sendRedirect("user-management");
     }
 }

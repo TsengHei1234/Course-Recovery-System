@@ -22,6 +22,8 @@
             <%@ include file="/WEB-INF/jspf/topbar.jspf" %>
 
             <div class="app-content">
+                <%@ include file="/WEB-INF/jspf/flash-message.jspf" %>
+                
                 <div class="page-stack">
                     <section class="card content-card">
                         <div class="card-title-row">

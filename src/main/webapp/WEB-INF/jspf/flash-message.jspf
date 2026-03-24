@@ -1,0 +1,53 @@
+<%
+    String successMessage = null;
+    String errorMessage = null;
+
+    Object reqSuccess = request.getAttribute("successMessage");
+    Object reqError = request.getAttribute("errorMessage");
+
+    if (reqSuccess != null) {
+        successMessage = String.valueOf(reqSuccess);
+    } else if (session.getAttribute("successMessage") != null) {
+        successMessage = String.valueOf(session.getAttribute("successMessage"));
+        session.removeAttribute("successMessage");
+    }
+
+    if (reqError != null) {
+        errorMessage = String.valueOf(reqError);
+    } else if (session.getAttribute("errorMessage") != null) {
+        errorMessage = String.valueOf(session.getAttribute("errorMessage"));
+        session.removeAttribute("errorMessage");
+    }
+%>
+
+<% if (successMessage != null && !successMessage.isBlank()) { %>
+    <div id="flashMessage" class="flash-message flash-success">
+        <div class="flash-content">
+            <strong>Success</strong>
+            <span><%= successMessage %></span>
+        </div>
+        <button type="button" class="flash-close" onclick="closeFlashMessage()">×</button>
+    </div>
+<% } else if (errorMessage != null && !errorMessage.isBlank()) { %>
+    <div id="flashMessage" class="flash-message flash-error">
+        <div class="flash-content">
+            <strong>Error</strong>
+            <span><%= errorMessage %></span>
+        </div>
+        <button type="button" class="flash-close" onclick="closeFlashMessage()">×</button>
+    </div>
+<% } %>
+
+<script>
+    function closeFlashMessage() {
+        const flash = document.getElementById("flashMessage");
+        if (flash) {
+            flash.classList.add("flash-hide");
+            setTimeout(() => flash.remove(), 300);
+        }
+    }
+
+    setTimeout(() => {
+        closeFlashMessage();
+    }, 5000);
+</script>
