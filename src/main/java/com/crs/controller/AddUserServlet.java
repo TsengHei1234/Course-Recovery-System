@@ -1,5 +1,6 @@
 package com.crs.controller;
 
+import com.crs.ejb.EmailService;
 import com.crs.ejb.UserManagementService;
 import com.crs.model.Role;
 import com.crs.model.User;
@@ -11,7 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/add-user")
 public class AddUserServlet extends HttpServlet {
@@ -19,6 +22,9 @@ public class AddUserServlet extends HttpServlet {
 
     @EJB
     private UserManagementService userManagementService;
+
+    @EJB
+    private EmailService emailService;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -71,6 +77,29 @@ public class AddUserServlet extends HttpServlet {
 
         userManagementService.createUser(user);
 
+        // send account-created email
+        Map<String, String> values = new HashMap<>();
+        values.put("userName", user.getName());
+        values.put("userEmail", user.getEmail());
+        values.put("roleName", getRoleNameById(user.getRoleId()));
+
+        emailService.sendByTemplate("ACCOUNT_CREATED", user.getEmail(), values);
+
+        request.getSession().setAttribute("successMessage", "User created successfully.");
         response.sendRedirect("user-management");
+    }
+
+    private String getRoleNameById(int roleId) {
+        List<Role> roleList = userManagementService.getAllRoles();
+
+        if (roleList != null) {
+            for (Role role : roleList) {
+                if (role.getRoleId() == roleId) {
+                    return role.getRoleName();
+                }
+            }
+        }
+
+        return "User";
     }
 }

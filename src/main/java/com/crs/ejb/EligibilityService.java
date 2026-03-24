@@ -8,15 +8,29 @@ import java.util.List;
 @Local
 public interface EligibilityService {
 
-    List<EligibilityRecord> getAwaitingCheckRecords();
+    List<EligibilityRecord> getAwaitingCheckRecords(String programme, String intake, String yearName, String semesterName, String search);
 
-    List<EligibilityRecord> getPendingApprovalRecords();
+    List<EligibilityRecord> getPendingApprovalRecords(String programme, String intake, String yearName, String semesterName, String search);
 
-    List<EligibilityRecord> getRecoveryQueueRecords();
+    List<EligibilityRecord> getRecoveryQueueRecords(String programme, String intake, String yearName, String semesterName, String search);
 
-    List<EligibilityRecord> getProcessedRecords();
-    
-    void checkAllEligibility(int userId);
-    
+    List<EligibilityRecord> getProcessedRecords(String programme, String intake, String yearName, String semesterName, String search);
+
+    List<String> getProgrammeOptions();
+
+    List<String> getIntakeOptions();
+
+    List<String> getYearOptions();
+
+    List<String> getSemesterOptions();
+
+    void checkAllEligibility(int userId, String programme, String intake, String yearName, String semesterName, String search);
+
     void approveEnrolment(int progressionId, int userId);
+
+    void approveSelected(List<Integer> progressionIds, int userId);
+
+    void sendToRecovery(int progressionId, int userId);
+
+    void sendSelectedToRecovery(List<Integer> progressionIds, int userId);
 }

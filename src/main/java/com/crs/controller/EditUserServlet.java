@@ -90,6 +90,7 @@ public class EditUserServlet extends HttpServlet {
 
         userManagementService.updateUser(user);
 
+        request.getSession().setAttribute("successMessage", "User updated successfully.");
         response.sendRedirect("user-management");
     }
 }
