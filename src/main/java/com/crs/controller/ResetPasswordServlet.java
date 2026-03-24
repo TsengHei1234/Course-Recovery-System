@@ -1,6 +1,8 @@
 package com.crs.controller;
 
 import com.crs.dao.UserDAO;
+import com.crs.ejb.NotificationService;
+import com.crs.model.User;
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,6 +19,9 @@ public class ResetPasswordServlet extends HttpServlet {
 
     @EJB
     private UserDAO userDAO;
+
+    @EJB
+    private NotificationService notificationService;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -48,10 +53,16 @@ public class ResetPasswordServlet extends HttpServlet {
         }
 
         userDAO.updatePassword(resetUserId, newPassword);
+        User resetUser = userDAO.findById(resetUserId);
+        boolean emailSent = notificationService.sendPasswordResetConfirmation(resetUser);
 
         session.removeAttribute("resetUserId");
 
-        request.setAttribute("successMessage", "Password has been reset successfully. Please login again.");
+        if (emailSent) {
+            request.setAttribute("successMessage", "Password has been reset successfully. Please login again.");
+        } else {
+            request.setAttribute("successMessage", "Password has been reset successfully, but the confirmation email could not be sent. Please login again.");
+        }
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 }

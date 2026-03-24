@@ -7,6 +7,7 @@
 
     <nav class="sidebar-nav">
         <a class="nav-link ${requestScope.currentPage eq 'users' ? 'active' : ''}"
+           style="${sessionScope.roleName eq 'Course Administrator' ? '' : 'display:none;'}"
            href="${pageContext.request.contextPath}/user-management">
             <span class="nav-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
@@ -20,7 +21,7 @@
         </a>
 
         <a class="nav-link ${requestScope.currentPage eq 'students' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/students.jsp">
+           href="${pageContext.request.contextPath}/students">
             <span class="nav-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                     <path d="M22 10 12 5 2 10l10 5 10-5z"></path>
@@ -31,7 +32,7 @@
         </a>
 
         <a class="nav-link ${requestScope.currentPage eq 'courses' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/programs-courses.jsp">
+           href="${pageContext.request.contextPath}/programs-courses">
             <span class="nav-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -67,7 +68,7 @@
         </a>
 
         <a class="nav-link ${requestScope.currentPage eq 'reports' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/academic-reports.jsp">
+           href="${pageContext.request.contextPath}/academic-reports">
             <span class="nav-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -81,7 +82,7 @@
         </a>
 
         <a class="nav-link ${requestScope.currentPage eq 'email-templates' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/email-templates.jsp">
+           href="${pageContext.request.contextPath}/email-templates">
             <span class="nav-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                     <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -93,6 +94,6 @@
     </nav>
 
     <div class="sidebar-footer">
-        <a class="btn btn-outline btn-block btn-left" href="${pageContext.request.contextPath}/login.jsp?logout=true">Logout</a>
+        <a class="btn btn-outline btn-block btn-left" href="${pageContext.request.contextPath}/logout">Logout</a>
     </div>
 </aside>
