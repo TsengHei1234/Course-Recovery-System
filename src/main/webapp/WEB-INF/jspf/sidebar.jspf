@@ -8,7 +8,7 @@
     <nav class="sidebar-nav">
         <a class="nav-link ${requestScope.currentPage eq 'users' ? 'active' : ''}"
            style="${sessionScope.roleName eq 'Course Administrator' ? '' : 'display:none;'}"
-           href="user-management">
+           href="${pageContext.request.contextPath}/user-management">
             <span class="nav-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
@@ -44,7 +44,7 @@
 
         <a class="nav-link ${requestScope.currentPage eq 'recovery-hub' || requestScope.currentPage eq 'recovery-workspace' ? 'active' : ''}"
            style="${sessionScope.roleName eq 'Academic Officer' ? '' : 'display:none;'}"
-           href="${pageContext.request.contextPath}/recovery-plans.jsp">
+           href="${pageContext.request.contextPath}/recovery-plans">
             <span class="nav-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="9"></circle>
@@ -56,7 +56,7 @@
         </a>
 
         <a class="nav-link ${requestScope.currentPage eq 'eligibility' ? 'active' : ''}"
-           href="${pageContext.request.contextPath}/eligibility.jsp">
+           href="${pageContext.request.contextPath}/eligibility">
             <span class="nav-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                     <rect x="9" y="2" width="6" height="4" rx="1"></rect>
@@ -94,6 +94,6 @@
     </nav>
 
     <div class="sidebar-footer">
-        <a class="btn btn-outline btn-block btn-left" href="${pageContext.request.contextPath}/login.jsp?logout=true">Logout</a>
+        <a class="btn btn-outline btn-block btn-left" href="${pageContext.request.contextPath}/logout">Logout</a>
     </div>
 </aside>

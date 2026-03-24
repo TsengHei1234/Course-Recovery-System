@@ -24,6 +24,12 @@ public class EmailTemplateDAOImpl implements EmailTemplateDAO {
     private static final String FIND_MODULES_SQL =
             "SELECT DISTINCT module FROM email_templates ORDER BY module";
 
+    private static final String UPDATE_TEMPLATE_SQL =
+            "UPDATE email_templates " +
+            "SET template_name = ?, module = ?, trigger_event = ?, " +
+            "    subject_template = ?, body_template = ?, is_active = ? " +
+            "WHERE email_template_id = ?";
+
     @Override
     public List<String> findAllModules() {
         List<String> modules = new ArrayList<>();
@@ -107,6 +113,51 @@ public class EmailTemplateDAOImpl implements EmailTemplateDAO {
     }
 
     @Override
+    public List<EmailTemplate> findAll() {
+        List<EmailTemplate> list = new ArrayList<>();
+        String sql = BASE_SELECT + "ORDER BY et.module, et.template_name, et.email_template_id";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+
+        } catch (Exception e) {
+            System.out.println("ERROR in findAll() email templates");
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    @Override
+    public EmailTemplate findById(int templateId) {
+        EmailTemplate template = null;
+        String sql = BASE_SELECT + "WHERE et.email_template_id = ? LIMIT 1";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, templateId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    template = mapRow(rs);
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("ERROR in findById() email template");
+            e.printStackTrace();
+        }
+
+        return template;
+    }
+
+    @Override
     public EmailTemplate findActiveByCode(String templateCode) {
         if (templateCode == null || templateCode.isBlank()) {
             return null;
@@ -131,10 +182,29 @@ public class EmailTemplateDAOImpl implements EmailTemplateDAO {
         return null;
     }
 
+    @Override
+    public void updateTemplate(EmailTemplate template) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(UPDATE_TEMPLATE_SQL)) {
+
+            ps.setString(1, template.getTemplateName());
+            ps.setString(2, template.getModule());
+            ps.setString(3, template.getTriggerEvent());
+            ps.setString(4, template.getSubjectTemplate());
+            ps.setString(5, template.getBodyTemplate());
+            ps.setInt(6, template.isActive() ? 1 : 0);
+            ps.setInt(7, template.getEmailTemplateId());
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println("ERROR in updateTemplate()");
+            e.printStackTrace();
+        }
+    }
+
     private void bindParameters(PreparedStatement preparedStatement, List<Object> parameters) throws Exception {
         for (int index = 0; index < parameters.size(); index++) {
-            Object parameterValue = parameters.get(index);
-            preparedStatement.setObject(index + 1, parameterValue);
+            preparedStatement.setObject(index + 1, parameters.get(index));
         }
     }
 

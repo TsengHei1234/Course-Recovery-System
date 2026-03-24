@@ -24,6 +24,8 @@
             <%@ include file="/WEB-INF/jspf/topbar.jspf" %>
 
             <div class="app-content">
+            
+	            <%@ include file="/WEB-INF/jspf/flash-message.jspf" %>
                 <div class="page-stack">
                     <section class="card content-card">
                         <div class="card-title-row">
@@ -36,16 +38,16 @@
                         </div>
 
                         <%
-                            String errorMessage = (String) request.getAttribute("errorMessage");
-                            User user = (User) request.getAttribute("user");
-                            List<Role> roleList = (List<Role>) request.getAttribute("roleList");
-                        %>
-
-                        <% if (errorMessage != null) { %>
-                            <div class="helper-box" style="color:#b91c1c; border-color:#fecaca; background:#fef2f2;">
-                                <%= errorMessage %>
-                            </div>
-                        <% } %>
+						    String formErrorMessage = (String) request.getAttribute("errorMessage");
+						    User user = (User) request.getAttribute("user");
+						    List<Role> roleList = (List<Role>) request.getAttribute("roleList");
+						%>
+						
+						<% if (formErrorMessage != null) { %>
+						    <div class="helper-box" style="color:#b91c1c; border-color:#fecaca; background:#fef2f2;">
+						        <%= formErrorMessage %>
+						    </div>
+						<% } %>
 
                         <% if (user != null) { %>
                         <form action="edit-user" method="post" class="page-stack">

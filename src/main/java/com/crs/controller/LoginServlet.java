@@ -70,6 +70,14 @@ public class LoginServlet extends HttpServlet {
 //            request.setAttribute("errorMessage", "Unauthorized role.");
 //            request.getRequestDispatcher("login.jsp").forward(request, response);
 //        }
-        response.sendRedirect("user-management");
+        if ("Course Administrator".equalsIgnoreCase(roleName)) {
+            response.sendRedirect("user-management");
+        } else if ("Academic Officer".equalsIgnoreCase(roleName)) {
+            response.sendRedirect("eligibility");
+        } else {
+            session.invalidate();
+            request.setAttribute("errorMessage", "Unauthorized role.");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        }
     }
 }

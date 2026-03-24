@@ -1741,3 +1741,58 @@ textarea {
 .template-preview-shell {
     min-height: 320px;
 }
+
+.flash-message {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid transparent;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.flash-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.flash-content strong {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.flash-success {
+    background: #ecfdf3;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.flash-error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.flash-close {
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    color: inherit;
+    line-height: 1;
+    padding: 0;
+}
+
+.flash-hide {
+    opacity: 0;
+    transform: translateY(-8px);
+}

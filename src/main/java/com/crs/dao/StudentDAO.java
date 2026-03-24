@@ -22,4 +22,12 @@ public interface StudentDAO {
     List<ReferenceOption> findAllYears();
 
     List<ReferenceOption> findAllSemesters();
+
+    void updateStudentTerm(String studentId, int yearId, int semesterId);
+
+    String findStudentEmailByStudentId(String studentId);
+
+    String findStudentNameByStudentId(String studentId);
+
+    String findProgramNameByStudentId(String studentId);
 }
