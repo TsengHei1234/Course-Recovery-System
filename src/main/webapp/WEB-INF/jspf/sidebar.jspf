@@ -7,7 +7,6 @@
 
     <nav class="sidebar-nav">
         <a class="nav-link ${requestScope.currentPage eq 'users' ? 'active' : ''}"
-           style="${sessionScope.roleName eq 'Course Administrator' ? '' : 'display:none;'}"
            href="${pageContext.request.contextPath}/user-management">
             <span class="nav-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">

@@ -73,7 +73,7 @@ public class LoginServlet extends HttpServlet {
         if ("Course Administrator".equalsIgnoreCase(roleName)) {
             response.sendRedirect("user-management");
         } else if ("Academic Officer".equalsIgnoreCase(roleName)) {
-            response.sendRedirect("eligibility");
+            response.sendRedirect("user-management");
         } else {
             session.invalidate();
             request.setAttribute("errorMessage", "Unauthorized role.");
