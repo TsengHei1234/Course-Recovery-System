@@ -32,38 +32,43 @@ public class RecoveryDAOImpl implements RecoveryDAO {
 	        "    COUNT(DISTINCT CASE " +
 	        "        WHEN (COALESCE(scc.grade_point, 0) < 2.00 OR UPPER(COALESCE(scc.grade, '')) = 'F') " +
 	        "         AND (sp.student_plan_id IS NULL OR UPPER(COALESCE(sp.status, '')) = 'COMPLETED') " +
-	        "        THEN scc.student_course_component_id END) AS failed_components_count " +
+	        "        THEN CONCAT(sc.program_course_id, '-', scc.course_component_id) END) AS failed_components_count " +
 	        "FROM students s " +
 	        "JOIN programs p ON s.program_id = p.program_id " +
 	        "JOIN years y ON s.year_id = y.year_id " +
 	        "JOIN semesters sem ON s.semester_id = sem.semester_id " +
-	        "LEFT JOIN (" +
-	        "   SELECT sc1.* FROM student_courses sc1 " +
-	        "   JOIN (" +
-	        "       SELECT student_id, program_course_id, MAX(attempt_no) AS max_attempt " +
-	        "       FROM student_courses " +
-	        "       GROUP BY student_id, program_course_id" +
-	        "   ) latest " +
-	        "   ON sc1.student_id = latest.student_id " +
-	        "   AND sc1.program_course_id = latest.program_course_id " +
-	        "   AND sc1.attempt_no = latest.max_attempt" +
-	        ") sc ON sc.student_id = s.student_id " +
+	        "LEFT JOIN student_courses sc ON sc.student_id = s.student_id " +
 	        "LEFT JOIN student_course_components scc ON scc.student_course_id = sc.student_course_id " +
 	        "LEFT JOIN student_plans sp ON sp.student_course_component_id = scc.student_course_component_id " +
-	        "WHERE EXISTS (" +
-	        "   SELECT 1 " +
-	        "   FROM progression_enrolments pe " +
-	        "   WHERE pe.student_id = s.student_id " +
-	        "     AND (" +
-	        "         pe.status = 'SENT_TO_RECOVERY' " +
-	        "         OR (pe.status = 'APPROVED' AND COALESCE(pe.failed_course_count, 0) > 0)" +
-	        "     )" +
+	        "JOIN ( " +
+	        "    SELECT " +
+	        "        sc2.student_id, " +
+	        "        sc2.program_course_id, " +
+	        "        scc2.course_component_id, " +
+	        "        MAX(sc2.attempt_no) AS max_attempt " +
+	        "    FROM student_courses sc2 " +
+	        "    JOIN student_course_components scc2 ON scc2.student_course_id = sc2.student_course_id " +
+	        "    GROUP BY sc2.student_id, sc2.program_course_id, scc2.course_component_id " +
+	        ") latest " +
+	        "  ON sc.student_id = latest.student_id " +
+	        " AND sc.program_course_id = latest.program_course_id " +
+	        " AND sc.attempt_no = latest.max_attempt " +
+	        " AND scc.course_component_id = latest.course_component_id " +
+	        "WHERE EXISTS ( " +
+	        "    SELECT 1 " +
+	        "    FROM progression_enrolments pe " +
+	        "    WHERE pe.student_id = s.student_id " +
+	        "      AND ( " +
+	        "           pe.status = 'SENT_TO_RECOVERY' " +
+	        "        OR (pe.status = 'APPROVED' AND COALESCE(pe.failed_course_count, 0) > 0) " +
+	        "        OR pe.status = 'AWAITING_RECHECK' " +
+	        "      ) " +
 	        ") " +
 	        "GROUP BY s.student_id, s.student_name, p.program_name, y.year_name, sem.semester_name " +
 	        "HAVING COUNT(DISTINCT CASE " +
 	        "        WHEN (COALESCE(scc.grade_point, 0) < 2.00 OR UPPER(COALESCE(scc.grade, '')) = 'F') " +
 	        "         AND (sp.student_plan_id IS NULL OR UPPER(COALESCE(sp.status, '')) = 'COMPLETED') " +
-	        "        THEN scc.student_course_component_id END) > 0 " +
+	        "        THEN CONCAT(sc.program_course_id, '-', scc.course_component_id) END) > 0 " +
 	        "ORDER BY s.student_id";
 
     private static final String FIND_ACTIVE_SQL =
@@ -1202,5 +1207,50 @@ public class RecoveryDAOImpl implements RecoveryDAO {
         }
 
         return attemptNo;
+    }
+    
+    private static final String HAS_REMAINING_FAILED_COMPONENTS_FOR_RECOVERY_SQL =
+            "SELECT COUNT(*) AS total " +
+            "FROM ( " +
+            "    SELECT sc.program_course_id, scc.course_component_id " +
+            "    FROM student_courses sc " +
+            "    JOIN student_course_components scc ON scc.student_course_id = sc.student_course_id " +
+            "    JOIN ( " +
+            "        SELECT sc2.student_id, sc2.program_course_id, scc2.course_component_id, MAX(sc2.attempt_no) AS max_attempt " +
+            "        FROM student_courses sc2 " +
+            "        JOIN student_course_components scc2 ON scc2.student_course_id = sc2.student_course_id " +
+            "        WHERE sc2.student_id = ? " +
+            "        GROUP BY sc2.student_id, sc2.program_course_id, scc2.course_component_id " +
+            "    ) latest " +
+            "      ON sc.student_id = latest.student_id " +
+            "     AND sc.program_course_id = latest.program_course_id " +
+            "     AND sc.attempt_no = latest.max_attempt " +
+            "     AND scc.course_component_id = latest.course_component_id " +
+            "    WHERE sc.student_id = ? " +
+            "      AND (COALESCE(scc.grade_point, 0) < 2.00 OR UPPER(COALESCE(scc.grade, '')) = 'F') " +
+            ") x";
+    
+    @Override
+    public boolean hasRemainingFailedComponentsForRecovery(String studentId) {
+        boolean hasRemaining = false;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(HAS_REMAINING_FAILED_COMPONENTS_FOR_RECOVERY_SQL)) {
+
+            ps.setString(1, studentId);
+            ps.setString(2, studentId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    hasRemaining = rs.getInt("total") > 0;
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("ERROR in hasRemainingFailedComponentsForRecovery()");
+            e.printStackTrace();
+        }
+
+        return hasRemaining;
     }
 }

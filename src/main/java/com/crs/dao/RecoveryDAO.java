@@ -88,4 +88,6 @@ public interface RecoveryDAO {
     double calculateWeightedMarkForStudentCourse(int studentCourseId);
     
     int findAttemptNoByStudentCourseId(int studentCourseId);
+    
+    boolean hasRemainingFailedComponentsForRecovery(String studentId);
 }
