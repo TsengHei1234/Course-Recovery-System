@@ -50,26 +50,6 @@ public class LoginServlet extends HttpServlet {
 
         String roleName = user.getRoleName();
 
-//        if ("Course Administrator".equalsIgnoreCase(roleName)) {
-//            response.sendRedirect("admin/dashboard");
-//        } else if ("Academic Officer".equalsIgnoreCase(roleName)) {
-//            response.sendRedirect("officer/dashboard");
-//        } else {
-//            session.invalidate();
-//            request.setAttribute("errorMessage", "Unauthorized role.");
-//            request.getRequestDispatcher("login.jsp").forward(request, response);
-//        }
-
-        
-//        if ("Course Administrator".equalsIgnoreCase(roleName)) {
-//            response.sendRedirect("adminDashboard.jsp");
-//        } else if ("Academic Officer".equalsIgnoreCase(roleName)) {
-//            response.sendRedirect("officerDashboard.jsp");
-//        } else {
-//            session.invalidate();
-//            request.setAttribute("errorMessage", "Unauthorized role.");
-//            request.getRequestDispatcher("login.jsp").forward(request, response);
-//        }
         if ("Course Administrator".equalsIgnoreCase(roleName)) {
             response.sendRedirect("user-management");
         } else if ("Academic Officer".equalsIgnoreCase(roleName)) {
