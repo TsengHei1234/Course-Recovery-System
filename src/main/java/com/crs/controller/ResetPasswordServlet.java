@@ -3,6 +3,7 @@ package com.crs.controller;
 import com.crs.dao.UserDAO;
 import com.crs.ejb.NotificationService;
 import com.crs.model.User;
+import com.crs.util.PasswordUtil;
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -52,7 +53,7 @@ public class ResetPasswordServlet extends HttpServlet {
             return;
         }
 
-        userDAO.updatePassword(resetUserId, newPassword);
+        userDAO.updatePassword(resetUserId, PasswordUtil.hashPassword(newPassword));
         User resetUser = userDAO.findById(resetUserId);
         boolean emailSent = notificationService.sendPasswordResetConfirmation(resetUser);
 

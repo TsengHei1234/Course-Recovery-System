@@ -123,7 +123,7 @@ public class EmailTemplateServiceBean implements EmailTemplateService {
     private Map<String, String> buildSampleValues() {
         Map<String, String> sampleValues = new LinkedHashMap<>();
         sampleValues.put("userName", "Brandon Lim");
-        sampleValues.put("userEmail", "brandon.lim@crs.edu");
+        sampleValues.put("userEmail", "student@example.com");
         sampleValues.put("roleName", "Course Administrator");
         sampleValues.put("studentName", "Suy Tseng Hei");
         sampleValues.put("studentId", "TP067009");

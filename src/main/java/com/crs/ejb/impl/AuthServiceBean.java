@@ -25,13 +25,16 @@ public class AuthServiceBean implements AuthService {
             return null;
         }
 
-        // 如果你现在 DB 还是明文密码，先暂时这样：
-//        if (!user.getPassword().equals(password)) {
-//            return null;
-//        }
+        if (!PasswordUtil.verifyPassword(password, user.getPassword())) {
+            return null;
+        }
 
-        // 如果后面换成 hash，再改成：
-         if (!PasswordUtil.verifyPassword(password, user.getPassword())) return null;
+        // Upgrade legacy plaintext passwords after the first successful login.
+        if (PasswordUtil.needsRehash(user.getPassword())) {
+            String hashedPassword = PasswordUtil.hashPassword(password);
+            userDAO.updatePassword(user.getUserId(), hashedPassword);
+            user.setPassword(hashedPassword);
+        }
 
         return user;
     }

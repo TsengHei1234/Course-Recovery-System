@@ -8,4 +8,11 @@ work/
 *.log
 .DS_Store
 Thumbs.db
-/.classpath
+.classpath
+.project
+.settings/
+.idea/
+.vscode/
+.env
+*.local
+*.secret

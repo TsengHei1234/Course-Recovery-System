@@ -72,7 +72,8 @@ public class AddUserServlet extends HttpServlet {
         user.setRoleId(Integer.parseInt(roleIdStr));
         user.setName(name.trim());
         user.setEmail(email.trim());
-        user.setPassword(password.trim()); // 先明文，后面再换 hash
+        // UserManagementService hashes the password before persistence.
+        user.setPassword(password.trim());
         user.setStatus("ACTIVE");
 
         userManagementService.createUser(user);

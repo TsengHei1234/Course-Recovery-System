@@ -5,6 +5,7 @@ import com.crs.dao.UserDAO;
 import com.crs.ejb.UserManagementService;
 import com.crs.model.Role;
 import com.crs.model.User;
+import com.crs.util.PasswordUtil;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 
@@ -42,6 +43,7 @@ public class UserManagementServiceBean implements UserManagementService {
     @Override
     public void createUser(User user) {
         user.setStatus("ACTIVE");
+        user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
         userDAO.insertUser(user);
     }
 
