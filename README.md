@@ -15,17 +15,71 @@ This was developed as a university group project. The preserved Git history is t
 - MySQL 8
 - Maven WAR packaging
 
-The code follows a Servlet → EJB → DAO/JDBC → MySQL structure.
+The code follows a Servlet -> EJB -> DAO/JDBC -> MySQL structure.
 
-## Local setup
+## Before you run the project
 
 1. Install JDK 17, Maven, MySQL 8, and Apache TomEE 10 WebProfile.
 2. Run `database/schema.sql` in an isolated local MySQL database.
 3. Set `CRS_DB_URL`, `CRS_DB_USER`, and `CRS_DB_PASSWORD` using `.env.example` as a name reference. The application reads operating-system environment variables or Java system properties; it does not load `.env` automatically.
-4. Run `mvn clean package`.
-5. Deploy `target/course-recovery-system.war` to TomEE.
 
 Gmail delivery is optional. It also requires `CRS_GMAIL_CLIENT_ID`, `CRS_GMAIL_CLIENT_SECRET`, and `CRS_GMAIL_REFRESH_TOKEN`. Never commit real values.
+
+## Build and run
+
+### Eclipse IDE (recommended)
+
+1. Open Eclipse IDE for Enterprise Java and Web Developers with JDK 17 configured.
+2. Select **File > Import > Maven > Existing Maven Projects**.
+3. Select this repository and finish the Maven import.
+4. Add Apache TomEE 10 as a Tomcat 10.1 server in the **Servers** view.
+5. Add the project to the server and select **Run on Server**.
+
+TomEE supports deploying web applications through Eclipse using the Tomcat server adapter.
+
+### Visual Studio Code
+
+1. Install the **Extension Pack for Java**, which includes Maven support.
+2. Open this repository as the workspace folder and allow the Java extensions to import `pom.xml`.
+3. Open the **Maven** view and run **Lifecycle > test**, followed by **Lifecycle > package**.
+4. Copy `target/course-recovery-system.war` into the `webapps` directory of your TomEE installation.
+5. Start TomEE and open `http://localhost:8080/course-recovery-system/`.
+
+VS Code can build the Maven project, while TomEE runs the packaged web application.
+
+### IntelliJ IDEA Ultimate
+
+1. Open this repository and allow IntelliJ IDEA to import the Maven project.
+2. Select **Run > Edit Configurations**.
+3. Add a local **TomEE Server** configuration and select your TomEE 10 installation.
+4. Add the `course-recovery-system:war` artifact for deployment.
+5. Run the TomEE configuration.
+
+### Windows PowerShell
+
+Open PowerShell in the repository directory and run:
+
+```powershell
+mvn clean test package
+Copy-Item .\target\course-recovery-system.war "$env:CATALINA_HOME\webapps\course-recovery-system.war"
+& "$env:CATALINA_HOME\bin\startup.bat"
+```
+
+`CATALINA_HOME` must point to the TomEE installation directory.
+
+### macOS or Linux terminal
+
+Open a terminal in the repository directory and run:
+
+```bash
+mvn clean test package
+cp target/course-recovery-system.war "$CATALINA_HOME/webapps/course-recovery-system.war"
+"$CATALINA_HOME/bin/startup.sh"
+```
+
+After TomEE starts, open `http://localhost:8080/course-recovery-system/`.
+
+Official references: [Java in Visual Studio Code](https://code.visualstudio.com/docs/languages/java), [Java build tools in VS Code](https://code.visualstudio.com/docs/java/java-build), and [deploying applications in TomEE](https://tomee.apache.org/latest/docs/application-deployment-solutions.html).
 
 ## Main features
 
